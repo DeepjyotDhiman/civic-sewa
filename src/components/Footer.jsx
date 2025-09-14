@@ -10,7 +10,6 @@ const Footer = () => {
           {/* Column 1: About */}
           <div className="footer-column">
             <div className="footer-brand">
-              <img src="/logo.png" alt="Civic Sewa Logo" className="footer-logo" />
               <h4>Civic Sewa</h4>
             </div>
             <p>
