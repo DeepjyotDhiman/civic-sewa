@@ -15,7 +15,6 @@ const Navbar = ({ isLoggedIn, onLogout }) => {
       <nav className="navbar-container">
         {/* The logo and title are now a single link to the homepage */}
         <Link to="/" className="navbar-brand">
-          <img src="./assets/logo.png" alt="Civic Sewa Logo" className="navbar-logo" />
           <span className="navbar-title">Civic Sewa</span>
         </Link>
         <div className="navbar-links">
