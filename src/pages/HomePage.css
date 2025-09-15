@@ -1,132 +1,115 @@
-/* ===== HERO SECTION STYLES ===== */
-.hero-section {
+/* Hero Section Jharkhand */
+.hero-jharkhand {
   position: relative;
   height: 100vh;
-  width: 100%;
+  background: image()
+    no-repeat center center/cover;
   display: flex;
   align-items: center;
   justify-content: center;
-  text-align: center;
-  color: white;
-  
-  /* --- IMPORTANT --- */
-  /* The 'background' or 'background-image' property has been REMOVED from this CSS file. */
-  /* The image is now applied directly in HomePage.jsx to fix the pathing error. */
-  /* These properties below ensure the image, once loaded, is displayed correctly. */
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-size: cover;
-  height: 850px;
 }
+
 .hero-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
   height: 100%;
-  
-  background-color: rgba(0, 0, 0, 0.6);
-  z-index: 1;
+  background: rgba(33, 34, 33, 0.6); /* Dark green overlay */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
 }
+
 .hero-content {
-  position: relative;
-  z-index: 2;
-  padding: 40px;
+  text-align: center;
+  color: white;
   max-width: 800px;
 }
-.hero-title { font-size: 2.5rem; font-weight: 700; margin-bottom: 1rem; }
-.hero-description { font-size: 1.25rem; margin-bottom: 2.5rem; line-height: 1.6; }
-.hero-buttons { display: flex; justify-content: center; gap: 1.5rem; margin-bottom: 2rem; }
-.hero-btn { padding: 1rem 2.5rem; border: 2px solid white; border-radius: 50px; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
-.hero-btn.primary { background-color: #0d6efd; border-color: #0d6efd; color: white; }
-.hero-btn.primary:hover { background-color: #0b5ed7; border-color: #0b5ed7; transform: translateY(-3px); }
-.hero-btn.secondary { background-color: transparent; color: white; }
-.hero-btn.secondary:hover { background-color: white; color: #212529; transform: translateY(-3px); }
-.know-more-btn { background: none; border: none; color: white; font-size: 1rem; font-weight: 500; cursor: pointer; transition: color 0.3s ease; margin-top: 2rem; }
-.know-more-btn:hover { color: #dee2e6; }
 
-/* ===== LANGUAGE SWITCHER STYLES ===== */
-.language-switcher {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  z-index: 3;
-  display: flex;
-  gap: 10px;
-  background: rgba(0,0,0,0.3);
-  padding: 8px;
-  border-radius: 20px;
+.hero-content h1 {
+  font-size: 2.8rem;
+  color: #ffd700; /* Golden Yellow for Jharkhand */
 }
-.lang-btn {
-  background: transparent;
-  border: 1px solid transparent;
-  color: #dee2e6;
+
+.hero-content .tagline {
+  font-size: 1rem;
+  font-style: italic;
+  margin-bottom: 1rem;
+  color: #e0e0e0;
+}
+
+.hero-content h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  font-weight: bold;
+}
+
+.hero-content p {
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.8rem 1.5rem;
+  border-radius: 6px;
   font-weight: 600;
-  padding: 5px 10px;
-  border-radius: 15px;
-  cursor: pointer;
+  text-decoration: none;
   transition: all 0.3s ease;
 }
-.lang-btn:hover { color: white; }
-.lang-btn.active { background-color: white; color: #0d6efd; border-color: white; }
 
-/* ===== ABOUT SECTION STYLES ===== */
-.about-section { padding: 6rem 2rem; background-color: white; }
-.about-container { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1.25fr; align-items: center; gap: 4rem; }
-.about-left { display: flex; justify-content: center; align-items: center; }
-.category-grid { 
-  display: grid;
-  grid-template-columns: repeat(3, 1fr); 
-  gap: 1.5rem; 
-}
-.category-icon { 
-  width: 130px; 
-  height: 130px; 
-  border-radius: 50%; 
-  background-color: #f8f9fa; 
-  border: 2px solid #dee2e6; 
-  display: flex; 
-  flex-direction: column; 
-  align-items: center; 
-  justify-content: center; 
-  text-align: center; 
-  padding: 10px; 
-  transition: all 0.3s ease; 
-  cursor: pointer; 
-}
-.category-icon:hover { 
-  background-color: #0d6efd; 
-  border-color: #0b5ed7; 
-  transform: scale(1.05); 
-}
-.category-icon:hover .icon-label {
+.report-btn {
+  background: #28a745;
   color: white;
 }
-.icon-image {
-  width: 50%;
-  height: 50%;
-  object-fit: contain;
-  margin-bottom: 8px;
-}
-.icon-label {
-  font-weight: 600;
-  color: #212529;
-  font-size: 0.9rem;
-  transition: color 0.3s ease;
-}
-.about-title { font-size: 2.5rem; margin-bottom: 1.5rem; color: #0d6efd; }
-.about-description { font-size: 1.1rem; line-height: 1.8; color: #6c757d; margin-bottom: 1rem; }
 
-/* Responsive adjustments */
-@media (max-width: 580px) {
-  .about-container { grid-template-columns: 1fr; text-align: center; }
-  .about-left { margin-bottom: 3rem; }
+.report-btn:hover {
+  background: #218838;
 }
+
+.emergency-btn {
+  background: #dc3545;
+  color: white;
+}
+
+.emergency-btn:hover {
+  background: #b02a37;
+}
+
+.track-btn {
+  margin-top: 1rem;
+}
+
+.track-report-btn {
+  background: transparent;
+  border: 2px solid white;
+  color: white;
+}
+
+.track-report-btn:hover {
+  background: white;
+  color: #006400;
+}
+
+/* Responsive */
 @media (max-width: 768px) {
-  .hero-title { font-size: 3rem; }
-  .hero-description { font-size: 1.1rem; }
-  .hero-buttons { flex-direction: column; align-items: center; gap: 1rem; }
-  .language-switcher { top: 10px; right: 10px; }
-  .category-grid { grid-template-columns: repeat(2, 1fr); }
-  .category-icon { width: 120px; height: 120px; }
+  .hero-content h1 {
+    font-size: 2rem;
+  }
+  .hero-content h2 {
+    font-size: 1.4rem;
+  }
+  .hero-content p {
+    font-size: 1rem;
+  }
 }

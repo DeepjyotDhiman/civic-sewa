@@ -1,109 +1,133 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebase";
-import "./Registerpage.css";
+import { doc, setDoc } from "firebase/firestore"; // ✅ Use setDoc to specify user ID
+import { auth, db } from "../firebase";
+import "./Registerpage.css"; // We'll create this CSS file
 
-// ✅ Success Notification (same as LoginPage)
-const SuccessNotification = () => (
-  <div className="success-banner">
-    🎉 Account Created Successfully! Redirecting...
-    <style>{`
-      .success-banner {
-        position: fixed;
-        top: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: #0d6efd;   /* 🔵 blue */
-        color: white;
-        padding: 12px 24px;
-        border-radius: 8px;
-        font-weight: 600;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        z-index: 1000;
-        animation: fadeInOut 3s ease-in-out forwards;
-      }
-      @keyframes fadeInOut {
-        0% { opacity: 0; transform: translate(-50%, -20px); }
-        10% { opacity: 1; transform: translate(-50%, 0); }
-        90% { opacity: 1; transform: translate(-50%, 0); }
-        100% { opacity: 0; transform: translate(-50%, -20px); }
-      }
-    `}</style>
-  </div>
-);
+const RegisterPage = ({ onLogin }) => {
+    const [fullName, setFullName] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [role, setRole] = useState("citizen"); // ✅ State to manage selected role
+    const [error, setError] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
+    const navigate = useNavigate();
 
-const RegisterPage = () => {
-  const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [showNotification, setShowNotification] = useState(false);
-  const navigate = useNavigate();
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (password.length < 6) {
+            setError("Password must be at least 6 characters long.");
+            return;
+        }
+        setIsLoading(true);
+        setError("");
 
-  const handleRegister = async (e) => {
-    e.preventDefault();
-    try {
-      await createUserWithEmailAndPassword(auth, email, password);
-      setShowNotification(true);
+        try {
+            // Step 1: Create user in Firebase Authentication
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
 
-      // ✅ Auto close after 2.5s and redirect
-      setTimeout(() => {
-        setShowNotification(false);
-        navigate("/login");
-      }, 2500);
-    } catch (err) {
-      setError(err.message);
-    }
-  };
+            // Step 2: Create a user document in Firestore with the user's UID as the document ID
+            await setDoc(doc(db, "users", user.uid), {
+                uid: user.uid,
+                fullName: fullName,
+                email: email,
+                role: role, // ✅ Save the selected role
+            });
 
-  return (
-    <div className="auth-page">
-      {showNotification && <SuccessNotification />} {/* ✅ Show popup */}
+            // Step 3: Log the user into the app state
+            onLogin(role);
 
-      <div className="auth-container">
-        <h1 className="auth-title">Create Account</h1>
-        {error && <p style={{ color: "red" }}>{error}</p>}
-        <form className="auth-form" onSubmit={handleRegister}>
-          <div className="form-group">
-            <label>Full Name</label>
-            <input 
-              type="text" 
-              className="form-input" 
-              value={fullName} 
-              onChange={(e) => setFullName(e.target.value)} 
-              required 
-            />
-          </div>
-          <div className="form-group">
-            <label>Email Address</label>
-            <input 
-              type="email" 
-              className="form-input" 
-              value={email} 
-              onChange={(e) => setEmail(e.target.value)} 
-              required 
-            />
-          </div>
-          <div className="form-group">
-            <label>Password</label>
-            <input 
-              type="password" 
-              className="form-input" 
-              value={password} 
-              onChange={(e) => setPassword(e.target.value)} 
-              required 
-            />
-          </div>
-          <button type="submit" className="auth-submit-btn">Sign Up</button>
-        </form>
-        <p className="auth-toggle-text">
-          Already have an account? <a href="/login" className="toggle-link">Login</a>
-        </p>
-      </div>
-    </div>
-  );
+            // Step 4: Redirect to the correct dashboard
+            if (role === 'authority') {
+                navigate("/authority/dashboard");
+            } else {
+                navigate("/dashboard");
+            }
+
+        } catch (err) {
+            if (err.code === 'auth/email-already-in-use') {
+                setError("This email address is already in use.");
+            } else {
+                setError("Failed to create an account. Please try again.");
+            }
+            console.error(err);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    return (
+        <div className="auth-page">
+            <div className="auth-container">
+                <h1 className="auth-title">Create an Account</h1>
+                {error && <p className="error-text">{error}</p>}
+                <form className="auth-form" onSubmit={handleSubmit}>
+                    <div className="form-group">
+                        <label>Full Name</label>
+                        <input
+                            type="text"
+                            className="form-input"
+                            value={fullName}
+                            onChange={(e) => setFullName(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label>Email Address</label>
+                        <input
+                            type="email"
+                            className="form-input"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label>Password</label>
+                        <input
+                            type="password"
+                            className="form-input"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                        />
+                    </div>
+
+                    {/* ✅ Role Selector UI */}
+                    <div className="form-group">
+                        <label>Register as</label>
+                        <div className="role-selector">
+                            <button
+                                type="button"
+                                className={`role-btn ${role === 'citizen' ? 'active' : ''}`}
+                                onClick={() => setRole('citizen')}
+                            >
+                                Citizen
+                            </button>
+                            <button
+                                type="button"
+                                className={`role-btn ${role === 'authority' ? 'active' : ''}`}
+                                onClick={() => setRole('authority')}
+                            >
+                                Authority
+                            </button>
+                        </div>
+                    </div>
+
+                    <button type="submit" className="auth-submit-btn" disabled={isLoading}>
+                        {isLoading ? "Creating Account..." : "Register"}
+                    </button>
+                </form>
+                <p className="auth-toggle-text">
+                    Already have an account? <Link to="/login" className="toggle-link">Login</Link>
+                </p>
+                 {/* ✅ Added styles for error text */}
+                <style>{`.error-text { color: #dc3545; font-weight: 500; margin-bottom: 15px; }`}</style>
+            </div>
+        </div>
+    );
 };
 
 export default RegisterPage;
-

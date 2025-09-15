@@ -1,86 +1,116 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 
-// Components
+// Common Components & CSS
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import './App.css';
 
-// Pages
+// Public Pages
 import HomePage from './pages/HomePage';
-import LoginPage from './pages/Loginpage';       // NEW
-import RegisterPage from './pages/Registerpage'; // NEW
-import ReportIssuePage from './pages/ReportIssuePage';
-import EmergencyReportPage from './pages/EmergencyReportPage';
-import DashboardPage from './pages/DashboardPage';
+import LoginPage from './pages/Loginpage';
+import RegisterPage from './pages/RegisterPage';
 import AboutPage from './pages/AboutPage';
 import ServicesPage from './pages/ServicesPage';
 import FeedbackPage from './pages/FeedbackPage';
 
-// CSS
-import './App.css';
+// Citizen Pages
+import DashboardPage from './pages/DashboardPage';
+import ReportIssuePage from './pages/ReportIssuePage';
+import EmergencyReportPage from './pages/EmergencyReportPage';
 
-// Protected Route
-const ProtectedRoute = ({ isLoggedIn, children }) => {
+// Authority Pages & Layout
+import AuthorityLayout from './authority/AuthorityLayout';
+import AuthorityDashboard from './authority/AuthorityDashboard';
+import AllIssuesPage from './authority/AllIssuesPage';
+
+const ProtectedRoute = ({ isLoggedIn, role, allowedRole, children }) => {
   if (!isLoggedIn) {
-    return <Navigate to="/login" replace />; // redirect to login if not logged in
+    return <Navigate to="/login" replace />;
+  }
+  if (role !== allowedRole) {
+    if (role === 'citizen') return <Navigate to="/dashboard" replace />;
+    if (role === 'authority') return <Navigate to="/authority/dashboard" replace />;
+    return <Navigate to="/" replace />;
   }
   return children;
 };
 
-// Placeholder
-const PlaceholderPage = ({ title }) => (
-  <div style={{ padding: '100px 40px', textAlign: 'center' }}>
-    <h1>{title}</h1>
-    <p>This page is under construction.</p>
-  </div>
-);
-
 const AppController = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(() => localStorage.getItem("isLoggedIn") === "true");
+  const [role, setRole] = useState(() => localStorage.getItem("role") || null);
   const location = useLocation();
 
-  const isHomePage = location.pathname === '/';
+  useEffect(() => {
+    if (isLoggedIn) {
+      localStorage.setItem("isLoggedIn", "true");
+      localStorage.setItem("role", role);
+    } else {
+      localStorage.removeItem("isLoggedIn");
+      localStorage.removeItem("role");
+    }
+  }, [isLoggedIn, role]);
 
-  const handleLogin = () => setIsLoggedIn(true);
-  const handleLogout = () => setIsLoggedIn(false);
+  const isAuthorityPage = location.pathname.startsWith('/authority');
+
+  const handleLogin = (userRole) => {
+    setIsLoggedIn(true);
+    setRole(userRole);
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setRole(null);
+  };
 
   return (
     <div className="app-container">
-      <Navbar isLoggedIn={isLoggedIn} onLogout={handleLogout} />
+      {!isAuthorityPage && <Navbar isLoggedIn={isLoggedIn} onLogout={handleLogout} userRole={role} />}
 
-      <main className={isHomePage ? "main-content no-padding-top" : "main-content"}>
+      <main className="main-content">
         <Routes>
           {/* --- PUBLIC ROUTES --- */}
+          {/* ✅ CORRECTED: The root path now correctly points to HomePage */}
           <Route path="/" element={<HomePage />} />
-          <Route path="/login" element={<LoginPage onLogin={handleLogin} />} /> {/* NEW */}
-          <Route path="/register" element={<RegisterPage />} />                 {/* NEW */}
+          <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
+          <Route path="/register" element={<RegisterPage onLogin={handleLogin} />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/services" element={<ServicesPage />} />
           <Route path="/feedback" element={<FeedbackPage />} />
 
-          {/* --- PROTECTED ROUTES --- */}
+          {/* --- CITIZEN PROTECTED ROUTES --- */}
           <Route
             path="/dashboard"
-            element={<ProtectedRoute isLoggedIn={isLoggedIn}><DashboardPage /></ProtectedRoute>}
+            element={<ProtectedRoute isLoggedIn={isLoggedIn} role={role} allowedRole="citizen"><DashboardPage /></ProtectedRoute>}
           />
           <Route
             path="/report-issue"
-            element={<ProtectedRoute isLoggedIn={isLoggedIn}><ReportIssuePage /></ProtectedRoute>}
+            element={<ProtectedRoute isLoggedIn={isLoggedIn} role={role} allowedRole="citizen"><ReportIssuePage /></ProtectedRoute>}
           />
           <Route
             path="/report-emergency"
-            element={<ProtectedRoute isLoggedIn={isLoggedIn}><EmergencyReportPage /></ProtectedRoute>}
+            element={<ProtectedRoute isLoggedIn={isLoggedIn} role={role} allowedRole="citizen"><EmergencyReportPage /></ProtectedRoute>}
           />
 
-          {/* --- PLACEHOLDER ROUTE --- */}
-          <Route path="/authority" element={<PlaceholderPage title="Authority Portal" />} />
+          {/* --- AUTHORITY PROTECTED ROUTES --- */}
+          <Route 
+            path="/authority" 
+            element={
+              <ProtectedRoute isLoggedIn={isLoggedIn} role={role} allowedRole="authority">
+                <AuthorityLayout onLogout={handleLogout} />
+              </ProtectedRoute>
+            }
+          >
+            <Route index element={<Navigate to="dashboard" replace />} /> 
+            <Route path="dashboard" element={<AuthorityDashboard />} />
+            <Route path="issues" element={<AllIssuesPage />} />
+          </Route>
 
-          {/* --- CATCH ALL --- */}
-          <Route path="*" element={<Navigate to="/" />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
 
-      <Footer />
+      {!isAuthorityPage && <Footer />}
     </div>
   );
 };

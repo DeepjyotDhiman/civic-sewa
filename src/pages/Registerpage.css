@@ -1,85 +1,125 @@
-/* ====== General Page Layout ====== */
+/* This can be merged with Loginpage.css into a file like AuthForm.css */
 .auth-page {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 90vh;
-  background: linear-gradient(135deg, #e9f1f7, #f9fbfd);
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 90vh;
+    background: linear-gradient(135deg, #f0f4f8, #ffffff);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
 
-/* ====== Register Card ====== */
 .auth-container {
-  background: #ffffff;
-  padding: 45px 35px;
-  border-radius: 12px;
-  width: 420px;
-  max-width: 95%;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
-  text-align: center;
-  border-top: 4px solid #2868a7; /* Green accent bar for Register */
+    background: #ffffff;
+    padding: 40px 35px;
+    border-radius: 12px;
+    width: 400px;
+    max-width: 95%;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    border-top: 4px solid #198754; /* Green for register */
 }
 
-/* ====== Title ====== */
 .auth-title {
-  font-size: 1.9rem;
-  font-weight: 700;
-  margin-bottom: 25px;
-  color: #222;
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 25px;
+    color: #333;
 }
 
-/* ====== Form ====== */
 .auth-form {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-  margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
 .form-group {
-  text-align: left;
+    text-align: left;
 }
 
 .form-group label {
-  display: block;
-  margin-bottom: 6px;
-  font-size: 0.95rem;
-  font-weight: 500;
-  color: #333;
+    display: block;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #555;
 }
 
-/* ====== Input Fields ====== */
 .form-input {
-  width: 100%;
-  padding: 12px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  font-size: 1rem;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .form-input:focus {
-  border-color: #285ba7;
-  box-shadow: 0 0 6px rgba(40, 167, 69, 0.3);
-  outline: none;
+    border-color: #198754;
+    box-shadow: 0 0 0 3px rgba(25, 135, 84, 0.2);
+    outline: none;
 }
 
-/* ====== Submit Button ====== */
+/* ✅ Styles for the new Role Selector */
+.role-selector {
+    display: flex;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.role-btn {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    background-color: #f8f9fa;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #555;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.role-btn.active {
+    background-color: #198754;
+    color: white;
+}
+/* End of Role Selector Styles */
+
 .auth-submit-btn {
-  background: #285ba7;
-  color: white;
-  font-size: 1rem;
-  font-weight: 600;
-  padding: 12px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background 0.3s ease;
+    background: #198754;
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 10px;
 }
 
 .auth-submit-btn:hover {
-  background: #0056b3;
+    background: #157347;
 }
 
-/* ====== Toggle Text (Login Link) ====== */
-.auth-
+.auth-submit-btn:disabled {
+    background: #6c757d;
+    cursor: not-allowed;
+}
+
+.auth-toggle-text {
+    margin-top: 20px;
+    font-size: 0.95rem;
+    color: #555;
+}
+
+.toggle-link {
+    color: #0d6efd;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.toggle-link:hover {
+    text-decoration: underline;
+}

@@ -1,97 +1,54 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { FaBars, FaTimes } from "react-icons/fa";
-import "./Navbar.css";
+import React, { useState, useEffect } from 'react';
+import { NavLink, Link } from 'react-router-dom'; // ✅ Use NavLink for active styles
+import { FiMenu, FiX } from 'react-icons/fi';
+import NotificationsBell from './NotificationsBell';
+import './Navbar.css';
 
-const Navbar = ({ isLoggedIn, onLogout }) => {
+const Navbar = ({ isLoggedIn, onLogout, userRole }) => {
   const [menuOpen, setMenuOpen] = useState(false);
-  const navigate = useNavigate();
+  const [scrolled, setScrolled] = useState(false);
 
-  const handleLogoutClick = () => {
-    onLogout();
-    navigate("/");
-  };
+  // ✅ Effect to handle navbar shadow on scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 10);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const closeMenu = () => setMenuOpen(false);
 
   return (
-    <header className="navbar-header">
+    <header className={`navbar-header ${scrolled ? 'scrolled' : ''}`}>
       <nav className="navbar-container">
-        {/* Logo */}
-        <Link to="/" className="navbar-brand"
+        <Link to="/" className="navbar-brand" onClick={closeMenu}>
+          civic<span>sewa</span>
         </Link>
 
-        {/* Hamburger Icon (mobile only) */}
-        <button
-          className="hamburger"
-          onClick={() => setMenuOpen(!menuOpen)}
-          aria-label="Toggle Menu"
-        >
-          {menuOpen ? <FaTimes /> : <FaBars />}
+        <button className="hamburger" onClick={() => setMenuOpen(!menuOpen)}>
+          {menuOpen ? <FiX /> : <FiMenu />}
         </button>
 
-        {/* Links */}
-        <div className={`navbar-links ${menuOpen ? "active" : ""}`}>
-          <Link to="/" className="nav-link" onClick={() => setMenuOpen(false)}>
-            Home
-          </Link>
-          <Link
-            to="/about"
-            className="nav-link"
-            onClick={() => setMenuOpen(false)}
-          >
-            About
-          </Link>
-          <Link
-            to="/services"
-            className="nav-link"
-            onClick={() => setMenuOpen(false)}
-          >
-            Services
-          </Link>
-          <Link
-            to="/feedback"
-            className="nav-link"
-            onClick={() => setMenuOpen(false)}
-          >
-            Feedback
-          </Link>
+        <div className={`navbar-links ${menuOpen ? 'active' : ''}`}>
+          <NavLink to="/" className="nav-link" onClick={closeMenu}>Home</NavLink>
+          <NavLink to="/about" className="nav-link" onClick={closeMenu}>About</NavLink>
+          <NavLink to="/services" className="nav-link" onClick={closeMenu}>Services</NavLink>
 
-          {/* Auth Buttons */}
           <div className="navbar-actions">
             {isLoggedIn ? (
               <>
-                <Link
-                  to="/dashboard"
-                  className="nav-button primary"
-                  onClick={() => setMenuOpen(false)}
-                >
-                  Dashboard
-                </Link>
-                <button
-                  onClick={() => {
-                    handleLogoutClick();
-                    setMenuOpen(false);
-                  }}
-                  className="nav-button logout"
-                >
+                <NavLink to="/dashboard" className="nav-link" onClick={closeMenu}>Dashboard</NavLink>
+                {/* ✅ Notification Bell integrated here */}
+                <NotificationsBell userRole={userRole} />
+                <button onClick={() => { onLogout(); closeMenu(); }} className="nav-button logout">
                   Logout
                 </button>
               </>
             ) : (
               <>
-                <Link
-                  to="/login"
-                  className="nav-button outline"
-                  onClick={() => setMenuOpen(false)}
-                >
-                  Login
-                </Link>
-                <Link
-                  to="/register"
-                  className="nav-button primary"
-                  onClick={() => setMenuOpen(false)}
-                >
-                  Register
-                </Link>
+                <Link to="/auth" className="nav-button outline" onClick={closeMenu}>Login</Link>
+                <Link to="/auth" className="nav-button primary" onClick={closeMenu}>Register</Link>
               </>
             )}
           </div>
