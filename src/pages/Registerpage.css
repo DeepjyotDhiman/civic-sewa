@@ -1,0 +1,85 @@
+/* ====== General Page Layout ====== */
+.auth-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 90vh;
+  background: linear-gradient(135deg, #e9f1f7, #f9fbfd);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* ====== Register Card ====== */
+.auth-container {
+  background: #ffffff;
+  padding: 45px 35px;
+  border-radius: 12px;
+  width: 420px;
+  max-width: 95%;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+  text-align: center;
+  border-top: 4px solid #2868a7; /* Green accent bar for Register */
+}
+
+/* ====== Title ====== */
+.auth-title {
+  font-size: 1.9rem;
+  font-weight: 700;
+  margin-bottom: 25px;
+  color: #222;
+}
+
+/* ====== Form ====== */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-top: 10px;
+}
+
+.form-group {
+  text-align: left;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #333;
+}
+
+/* ====== Input Fields ====== */
+.form-input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-input:focus {
+  border-color: #285ba7;
+  box-shadow: 0 0 6px rgba(40, 167, 69, 0.3);
+  outline: none;
+}
+
+/* ====== Submit Button ====== */
+.auth-submit-btn {
+  background: #285ba7;
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.auth-submit-btn:hover {
+  background: #0056b3;
+}
+
+/* ====== Toggle Text (Login Link) ====== */
+.auth-

@@ -1,3 +1,4 @@
+/* === Base Navbar Styles (already from you) === */
 .navbar-header {
   background-color: floralwhite;
   height: 50px;
@@ -26,7 +27,7 @@
 }
 
 .navbar-logo {
-  height: 45px; /* Control the size of your logo */
+  height: 45px;
   width: auto;
 }
 
@@ -69,12 +70,18 @@
   width: 100%;
 }
 
+/* === Action Buttons (Login, Register, Logout) === */
+.navbar-actions {
+  display: flex;
+  gap: 1rem;
+}
+
 .navbar-actions .nav-button {
   background-color: var(--primary-blue);
   color: var(--white);
   border: none;
-  padding: 0.6rem 1.5rem;
-  border-radius: 8px;
+  padding: 0.5rem 1.2rem;
+  border-radius: 6px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -88,9 +95,11 @@
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
-.navbar-actions .nav-button.logout {
-  background-color: var(--priority-high);
+/* Special case: Register button */
+.navbar-actions .nav-button.register {
+  background-color: var(--white);
+  color: var(--primary-blue);
+  border: 2px solid var(--primary-blue);
 }
-.navbar-actions .nav-button.logout:hover {
-  background-color: #2730b4;
-}
+
+.navbar-actions .nav-button.

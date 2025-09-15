@@ -1,56 +1,13 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate for navigation
+import { useNavigate } from 'react-router-dom'; 
+import { db } from "../firebase"; 
+import { collection, addDoc } from "firebase/firestore"; 
 
 // This component contains all the specific styles for the Report Issue Page.
 const ReportIssuePageStyles = () => (
-  <style>{`
-    .page-container { max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
-    .page-header { text-align: center; margin-bottom: 2rem; }
-    .page-title { font-size: 2.5rem; color: #0d6efd; }
-    .page-subtitle { font-size: 1.1rem; color: #6c757d; max-width: 600px; margin: 0.5rem auto 0; }
-    .form-container { background: white; padding: 2rem 2.5rem; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
-    .form-step-header { text-align: center; margin-bottom: 2rem; color: #6c757d; }
-    .form-step-header h3 { color: #212529; }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
-    .form-group { text-align: left; }
-    .form-group.full-width { grid-column: 1 / -1; margin-bottom: 1.5rem; }
-    .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; }
-    .form-input, .form-select, textarea.form-input { width: 100%; padding: 0.75rem; border: 1px solid #dee2e6; border-radius: 8px; font-size: 1rem; background-color: #f8f9fa; font-family: 'Poppins', sans-serif; }
-    textarea.form-input { resize: vertical; min-height: 80px; }
-    .priority-group { display: flex; gap: 1rem; align-items: center; padding-top: 0.5rem; }
-    .priority-btn { padding: 0.6rem 1.2rem; border: 1px solid #dee2e6; border-radius: 20px; cursor: pointer; background: #fff; transition: all 0.2s ease-in-out; font-weight: 500; }
-    .priority-btn.selected { color: white; transform: scale(1.05); font-weight: 600; }
-    .priority-btn.high.selected { background: #dc3545; border-color: #dc3545; }
-    .priority-btn.medium.selected { background: #ffc107; border-color: #ffc107; color: #212529; }
-    .priority-btn.low.selected { background: #198754; border-color: #198754; }
-    .form-navigation { display: flex; justify-content: space-between; margin-top: 2rem; border-top: 1px solid #dee2e6; padding-top: 1.5rem; }
-    .nav-form-btn { padding: 0.8rem 2rem; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; }
-    .nav-form-btn.primary { background-color: #0d6efd; color: white; }
-    .nav-form-btn.primary:hover { background-color: #0b5ed7; }
-    .nav-form-btn.secondary { background-color: #f8f9fa; color: #212529; border: 1px solid #dee2e6; }
-    .nav-form-btn:disabled { background-color: #e9ecef; cursor: not-allowed; color: #6c757d; }
-    .submitted-card-container { max-width: 900px; margin: 2rem auto; padding: 0 1rem; text-align: center; }
-    .submitted-title { color: #0d6efd; margin-bottom: 1.5rem; }
-    .issue-card { background: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); overflow: hidden; text-align: left; }
-    .issue-card .card-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.5rem; background: #f8f9fa; border-bottom: 1px solid #dee2e6; }
-    .issue-card .card-title { font-size: 1.5rem; margin: 0; color: #212529; }
-    .issue-card .card-body { padding: 1.5rem; display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
-    .issue-card .card-item strong { display: block; color: #6c757d; margin-bottom: 0.3rem; font-size: 0.9rem; text-transform: uppercase; }
-    .issue-card .card-item span { font-size: 1.1rem; font-weight: 500; }
-    .issue-card .card-item p { margin: 0; white-space: pre-wrap; }
-    .priority-badge { padding: 0.4rem 1rem; border-radius: 20px; color: white; font-weight: 600; font-size: 1rem; }
-    .priority-badge.high { background: #dc3545; }
-    .priority-badge.medium { background: #ffc107; color: #212529; }
-    .priority-badge.low { background: #198754; }
-    .submission-actions { display: flex; justify-content: center; gap: 1rem; margin-top: 2rem; }
-    .action-button { padding: 0.9rem 1.5rem; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
-    .action-button.primary { background-color: #0d6efd; color: white; }
-    .action-button.secondary { background-color: #6c757d; color: white; }
-    @media (max-width: 768px) { .form-row { grid-template-columns: 1fr; } .issue-card .card-body { grid-template-columns: 1fr; } }
-  `}</style>
+  <style>{` ... your styles stay the same ... `}</style>
 );
 
-// UPDATED: This component now has a button to navigate back to the dashboard.
 const IssueCard = ({ issue, onReset }) => {
   const navigate = useNavigate();
   if (!issue) return null;
@@ -95,10 +52,28 @@ const ReportIssuePage = () => {
   const nextStep = () => setCurrentStep(prev => prev + 1);
   const prevStep = () => setCurrentStep(prev => prev - 1);
 
-  const handleSubmit = () => {
-    if (!formData.priority) { alert('Please select a priority level.'); return; }
-    const issueData = { ...formData, image: formData.image?.name || 'No image uploaded' };
-    setSubmittedIssue(issueData);
+  const handleSubmit = async () => {
+    if (!formData.priority) { 
+      alert('Please select a priority level.'); 
+      return; 
+    }
+
+    const issueData = { 
+      ...formData, 
+      image: formData.image?.name || 'No image uploaded',
+      createdAt: new Date()
+    };
+
+    try {
+      // Save to Firestore
+      await addDoc(collection(db, "issues"), issueData);
+
+      // Show confirmation card
+      setSubmittedIssue(issueData);
+    } catch (error) {
+      console.error("Error saving issue: ", error);
+      alert("Something went wrong while saving the issue.");
+    }
   };
 
   const handleReset = () => {
