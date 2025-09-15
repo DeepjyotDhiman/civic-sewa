@@ -16,8 +16,7 @@ const Navbar = ({ isLoggedIn, onLogout }) => {
     <header className="navbar-header">
       <nav className="navbar-container">
         {/* Logo */}
-        <Link to="/" className="navbar-brand">
-          Civic <span>Sewa</span>
+        <Link to="/" className="navbar-brand"
         </Link>
 
         {/* Hamburger Icon (mobile only) */}
