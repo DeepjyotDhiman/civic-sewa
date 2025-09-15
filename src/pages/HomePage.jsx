@@ -99,7 +99,7 @@ const HomePage = () => {
           <h1 className="hero-title">{text.heroTitle}</h1>
           <p className="hero-description">{text.heroDescription}</p>
           <div className="hero-buttons">
-            <button onClick={() => navigate('/auth')} className="hero-btn primary">{text.citizenButton}</button>
+            <button onClick={() => navigate('/login')} className="hero-btn primary">{text.citizenButton}</button>
             <button onClick={() => navigate('/authority')} className="hero-btn secondary">{text.authorityButton}</button>
           </div>
           <button onClick={handleScrollToAbout} className="know-more-btn">{text.knowMoreButton}</button>
