@@ -1,45 +1,54 @@
-import React from 'react';
-import { NavLink, Outlet } from 'react-router-dom';
-import { FiGrid, FiList, FiLogOut } from 'react-icons/fi';
-import NotificationsBell from '../components/NotificationsBell';
-import './AuthorityLayout.css';
+import React from "react";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { FiGrid, FiList, FiLogOut } from "react-icons/fi";
 
 const AuthorityLayout = ({ onLogout }) => {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    onLogout();
+    navigate("/");
+  };
+
   return (
-    <div className="authority-layout">
-      <aside className="authority-sidebar">
-        <div className="sidebar-header">
-          <h3>Authority Portal</h3>
-        </div>
-        <nav className="sidebar-nav">
-          <NavLink to="/authority/dashboard" className="sidebar-link">
-            <FiGrid />
-            <span>Dashboard</span>
+    <div className="min-h-screen flex bg-neutral-950 text-neutral-100">
+
+      {/* Sidebar */}
+      <aside className="w-64 bg-neutral-900 border-r border-neutral-800 px-6 py-8">
+        <h2 className="text-xl font-semibold mb-10">
+          Authority Panel
+        </h2>
+
+        <nav className="space-y-3">
+          <NavLink
+            to="/authority/dashboard"
+            className="flex items-center gap-3 px-3 py-2 rounded-md
+                       text-neutral-300 hover:bg-neutral-800 hover:text-white"
+          >
+            <FiGrid /> Dashboard
           </NavLink>
-          <NavLink to="/authority/issues" className="sidebar-link">
-            <FiList />
-            <span>All Issues</span>
+
+          <NavLink
+            to="/authority/issues"
+            className="flex items-center gap-3 px-3 py-2 rounded-md
+                       text-neutral-300 hover:bg-neutral-800 hover:text-white"
+          >
+            <FiList /> All Issues
           </NavLink>
         </nav>
-        <div className="sidebar-footer">
-          <button onClick={onLogout} className="sidebar-link logout-btn">
-            <FiLogOut />
-            <span>Logout</span>
-          </button>
-        </div>
+
+        <button
+          onClick={handleLogout}
+          className="mt-12 flex items-center gap-2 text-red-400 hover:text-red-300"
+        >
+          <FiLogOut /> Logout
+        </button>
       </aside>
 
-      <div className="authority-main-content">
-        <header className="authority-header">
-          {/* This header is part of the main content area, not the sidebar */}
-          <div className="header-actions">
-            <NotificationsBell userRole="authority" />
-          </div>
-        </header>
-        <main className="authority-page-content">
-          <Outlet /> {/* Child routes (Dashboard, AllIssuesPage) render here */}
-        </main>
-      </div>
+      {/* Main Content */}
+      <main className="flex-1 p-10">
+        <Outlet />
+      </main>
     </div>
   );
 };

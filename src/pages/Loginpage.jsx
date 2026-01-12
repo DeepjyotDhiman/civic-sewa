@@ -1,120 +1,124 @@
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom"; // ✅ Use Link for navigation
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { doc, getDoc } from "firebase/firestore"; // ✅ Import Firestore functions
-import { auth, db } from "../firebase"; // ✅ Import db from firebase
-import "./Loginpage.css";
-
-// Success Notification (no changes)
-const SuccessNotification = () => (
-    <div className="success-banner">✅ Login Successful! Redirecting...</div>
-);
+import { useNavigate, Link } from "react-router-dom";
 
 const LoginPage = ({ onLogin }) => {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [error, setError] = useState("");
-    const [isLoading, setIsLoading] = useState(false); // ✅ Added loading state
-    const [showNotification, setShowNotification] = useState(false);
-    const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [role, setRole] = useState("citizen"); // ✅ key change
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setIsLoading(true);
-        setError("");
+  const navigate = useNavigate();
 
-        try {
-            // Step 1: Authenticate user with Firebase Auth
-            const userCredential = await signInWithEmailAndPassword(auth, email, password);
-            const user = userCredential.user;
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setError("");
 
-            // Step 2: Fetch user's role from Firestore
-            const userDocRef = doc(db, "users", user.uid);
-            const userDoc = await getDoc(userDocRef);
+    if (!email || !password) {
+      setError("Please enter email and password.");
+      return;
+    }
 
-            if (!userDoc.exists()) {
-                throw new Error("No user data found in database. Please contact support.");
-            }
+    setLoading(true);
 
-            const userData = userDoc.data();
-            const userRole = userData.role; // This will be 'citizen' or 'authority'
+    // 🔹 Simulated auth (replace with backend later)
+    setTimeout(() => {
+      onLogin(role);
 
-            // Step 3: Update the main app state with the correct role
-            onLogin(userRole);
-            setShowNotification(true);
+      if (role === "authority") {
+        navigate("/authority/dashboard");
+      } else {
+        navigate("/dashboard");
+      }
 
-            // Step 4: Redirect to the correct dashboard based on the role
-            setTimeout(() => {
-                setShowNotification(false);
-                if (userRole === 'authority') {
-                    navigate("/authority/dashboard");
-                } else {
-                    navigate("/dashboard");
-                }
-            }, 2000); // 2-second delay for the notification
+      setLoading(false);
+    }, 800);
+  };
 
-        } catch (err) {
-            setError("Failed to login. Please check your email and password.");
-            console.error(err);
-        } finally {
-            setIsLoading(false);
-        }
-    };
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4">
+      <div className="w-full max-w-md bg-white border border-slate-200 rounded-lg p-8">
 
-    return (
-        <div className="auth-page">
-            {showNotification && <SuccessNotification />}
-            <div className="auth-container">
-                {/* ✅ Changed title to be more generic */}
-                <h1 className="auth-title">Portal Login</h1>
-                {error && <p className="error-text">{error}</p>}
-                <form className="auth-form" onSubmit={handleSubmit}>
-                    <div className="form-group">
-                        <label>Email Address</label>
-                        <input
-                            type="email"
-                            className="form-input"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label>Password</label>
-                        <input
-                            type="password"
-                            className="form-input"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                        />
-                    </div>
-                    {/* ✅ Button is now disabled while loading */}
-                    <button type="submit" className="auth-submit-btn" disabled={isLoading}>
-                        {isLoading ? "Signing In..." : "Login"}
-                    </button>
-                </form>
-                <p className="auth-toggle-text">
-                    Don’t have an account? <Link to="/register" className="toggle-link">Register</Link>
-                </p>
-            </div>
-            {/* ✅ Added styles for success banner and error text directly here for simplicity */}
-            <style>{`
-                .success-banner {
-                    position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
-                    background: #28a745; color: white; padding: 12px 24px;
-                    border-radius: 8px; font-weight: 600;
-                    box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000;
-                    animation: fadeInOut 2.5s ease-in-out forwards;
-                }
-                @keyframes fadeInOut {
-                    0%, 100% { opacity: 0; transform: translate(-50%, -20px); }
-                    10%, 90% { opacity: 1; transform: translate(-50%, 0); }
-                }
-                .error-text { color: #dc3545; font-weight: 500; margin-bottom: 15px; }
-            `}</style>
+        <h1 className="text-2xl font-semibold text-slate-900 mb-6">
+          Portal Login
+        </h1>
+
+        {error && (
+          <p className="mb-4 text-sm text-red-600">{error}</p>
+        )}
+
+        {/* Role Selector */}
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-slate-700 mb-2">
+            Login As
+          </label>
+          <div className="flex gap-2">
+            {["citizen", "authority"].map((r) => (
+              <button
+                key={r}
+                type="button"
+                onClick={() => setRole(r)}
+                className={`flex-1 px-4 py-2 rounded-md border text-sm transition
+                  ${role === r
+                    ? "bg-slate-900 text-white border-slate-900"
+                    : "border-slate-300 text-slate-700 hover:bg-slate-100"}`}
+              >
+                {r.charAt(0).toUpperCase() + r.slice(1)}
+              </button>
+            ))}
+          </div>
         </div>
-    );
+
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
+            <label className="block text-sm font-medium mb-1">
+              Email Address
+            </label>
+            <input
+              type="email"
+              className="w-full border border-slate-300 rounded-md px-3 py-2
+                         focus:outline-none focus:ring-2 focus:ring-slate-900"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1">
+              Password
+            </label>
+            <input
+              type="password"
+              className="w-full border border-slate-300 rounded-md px-3 py-2
+                         focus:outline-none focus:ring-2 focus:ring-slate-900"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full py-2 rounded-md bg-slate-900 text-white
+                       hover:bg-slate-800 transition disabled:opacity-60"
+          >
+            {loading
+              ? "Signing In..."
+              : `Login as ${role === "authority" ? "Authority" : "Citizen"}`}
+          </button>
+        </form>
+
+        <p className="mt-6 text-sm text-slate-600">
+          Don’t have an account?{" "}
+          <Link to="/register" className="text-slate-900 font-medium">
+            Register
+          </Link>
+        </p>
+      </div>
+    </div>
+  );
 };
 
 export default LoginPage;

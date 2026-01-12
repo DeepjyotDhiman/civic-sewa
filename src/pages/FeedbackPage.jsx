@@ -1,61 +1,143 @@
-import React, { useState } from 'react';
-
-const FeedbackPageStyles = () => (
-  <style>{`
-    .page-container { max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
-    .page-header { text-align: center; margin-bottom: 2rem; }
-    .page-title { font-size: 2.8rem; color: #0d6efd; }
-    .page-subtitle { font-size: 1.2rem; color: #6c757d; max-width: 600px; margin: 0.5rem auto 0; }
-    .form-container { background: white; padding: 2rem 2.5rem; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
-    .form-group { text-align: left; margin-bottom: 1.5rem; }
-    .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; }
-    .form-input, textarea.form-input { width: 100%; padding: 0.75rem; border: 1px solid #dee2e6; border-radius: 8px; font-size: 1rem; background-color: #f8f9fa; font-family: 'Poppins', sans-serif; }
-    textarea.form-input { resize: vertical; min-height: 120px; }
-    .submit-btn { width: 100%; padding: 0.9rem; background-color: #0d6efd; color: white; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: background-color 0.3s ease; margin-top: 1rem; }
-    .submit-btn:hover { background-color: #0b5ed7; }
-    .success-message { text-align: center; padding: 2rem; background-color: #e7f3ff; border-left: 5px solid #0d6efd; color: #212529; border-radius: 8px; }
-    .success-message h3 { margin-bottom: 0.5rem; }
-  `}</style>
-);
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import {
+  FiMessageSquare,
+  FiSend,
+  FiCheckCircle
+} from "react-icons/fi";
 
 const FeedbackPage = () => {
   const [submitted, setSubmitted] = useState(false);
+  const [form, setForm] = useState({
+    category: "",
+    message: "",
+    email: ""
+  });
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    // In a real app, this is where you would send the form data to a server.
-    // For this demo, we will just show a success message.
+  const handleChange = (e) =>
+    setForm({ ...form, [e.target.name]: e.target.value });
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    // 🔌 API integration later
     setSubmitted(true);
   };
 
   if (submitted) {
     return (
-      <div className="page-container">
-        <FeedbackPageStyles />
-        <div className="success-message">
-          <h3>Thank You!</h3>
-          <p>Your feedback has been submitted successfully. We appreciate you taking the time to help us improve.</p>
-        </div>
+      <div className="min-h-screen bg-neutral-50 flex justify-center items-center px-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white border border-neutral-200 rounded-2xl p-10 max-w-lg text-center"
+        >
+          <FiCheckCircle className="text-teal-600 mx-auto mb-4" size={36} />
+          <h2 className="text-2xl font-semibold mb-2">
+            Feedback Submitted
+          </h2>
+          <p className="text-neutral-600">
+            Thank you for helping improve civic services.
+            Your feedback contributes directly to better governance.
+          </p>
+        </motion.div>
       </div>
     );
   }
 
   return (
-    <div className="page-container">
-      <FeedbackPageStyles />
-      <div className="page-header">
-        <h1 className="page-title">Contact & Feedback</h1>
-        <p className="page-subtitle">Have a suggestion or a question? We'd love to hear from you.</p>
-      </div>
-      <div className="form-container">
-        <form onSubmit={handleSubmit}>
-          <div className="form-group"><label htmlFor="name">Your Name</label><input type="text" id="name" className="form-input" required /></div>
-          <div className="form-group"><label htmlFor="email">Your Email</label><input type="email" id="email" className="form-input" required /></div>
-          <div className="form-group"><label htmlFor="subject">Subject</label><input type="text" id="subject" className="form-input" required /></div>
-          <div className="form-group"><label htmlFor="message">Message</label><textarea id="message" className="form-input" required></textarea></div>
-          <button type="submit" className="submit-btn">Submit Feedback</button>
+    <div className="bg-neutral-50 min-h-screen px-6 py-20">
+      <motion.div
+        initial={{ opacity: 0, y: 24 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="max-w-4xl mx-auto bg-white border border-neutral-200 rounded-2xl overflow-hidden"
+      >
+
+        {/* Header */}
+        <div className="bg-neutral-900 text-white px-10 py-8">
+          <div className="flex items-center gap-3">
+            <FiMessageSquare size={26} />
+            <h1 className="text-2xl font-semibold">
+              Citizen Feedback
+            </h1>
+          </div>
+          <p className="text-neutral-300 mt-2 max-w-2xl">
+            Share suggestions, concerns, or feedback to help authorities
+            improve public services and platform effectiveness.
+          </p>
+        </div>
+
+        {/* Form */}
+        <form
+          onSubmit={handleSubmit}
+          className="px-10 py-12 space-y-8"
+        >
+
+          {/* Category */}
+          <div>
+            <label className="label">
+              Feedback Category
+            </label>
+            <select
+              name="category"
+              required
+              className="input"
+              onChange={handleChange}
+            >
+              <option value="">Select category</option>
+              <option>Service Quality</option>
+              <option>Issue Resolution Delay</option>
+              <option>Platform Experience</option>
+              <option>Suggestion / Idea</option>
+              <option>Other</option>
+            </select>
+          </div>
+
+          {/* Message */}
+          <div>
+            <label className="label">
+              Your Message
+            </label>
+            <textarea
+              name="message"
+              rows="5"
+              required
+              className="input"
+              placeholder="Describe your feedback in detail..."
+              onChange={handleChange}
+            />
+          </div>
+
+          {/* Email */}
+          <div>
+            <label className="label">
+              Email (optional)
+            </label>
+            <input
+              name="email"
+              type="email"
+              className="input"
+              placeholder="you@example.com"
+              onChange={handleChange}
+            />
+            <p className="text-xs text-neutral-500 mt-1">
+              Provide your email if you would like a response.
+            </p>
+          </div>
+
+          {/* Submit */}
+          <button
+            type="submit"
+            className="w-full bg-neutral-900 text-white py-3 rounded-md
+                       flex justify-center items-center gap-2
+                       hover:bg-neutral-800 transition"
+          >
+            <FiSend />
+            Submit Feedback
+          </button>
+
         </form>
-      </div>
+      </motion.div>
     </div>
   );
 };

@@ -1,48 +1,63 @@
-import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+} from "react-router-dom";
 
-// Common Components & CSS
-import Navbar from './components/Navbar';
-import Footer from './components/Footer';
-import './App.css';
+/* Layout */
+import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
 
-// Public Pages
-import HomePage from './pages/HomePage';
-import LoginPage from './pages/Loginpage';
-import RegisterPage from './pages/RegisterPage';
-import AboutPage from './pages/AboutPage';
-import ServicesPage from './pages/ServicesPage';
-import FeedbackPage from './pages/FeedbackPage';
+/* Public */
+import HomePage from "./pages/HomePage";
+import LoginPage from "./pages/Loginpage";
+import RegisterPage from "./pages/Registerpage";
+import AboutPage from "./pages/AboutPage";
+import ServicesPage from "./pages/ServicesPage";
+import FeedbackPage from "./pages/FeedbackPage";
 
-// Citizen Pages
-import DashboardPage from './pages/DashboardPage';
-import ReportIssuePage from './pages/ReportIssuePage';
-import EmergencyReportPage from './pages/EmergencyReportPage';
+/* Citizen */
+import DashboardPage from "./pages/DashboardPage";
+import ReportIssuePage from "./pages/ReportIssuePage";
+import EmergencyReportPage from "./pages/EmergencyReportPage";
 
-// Authority Pages & Layout
-import AuthorityLayout from './authority/AuthorityLayout';
-import AuthorityDashboard from './authority/AuthorityDashboard';
-import AllIssuesPage from './authority/AllIssuesPage';
+/* Authority */
+import AuthorityLayout from "./authority/AuthorityLayout";
+import AuthorityDashboard from "./authority/AuthorityDashboard";
+import AllIssuesPage from "./authority/AllIssuesPage";
+
+/* ───────── Protected Route ───────── */
 
 const ProtectedRoute = ({ isLoggedIn, role, allowedRole, children }) => {
-  if (!isLoggedIn) {
-    return <Navigate to="/login" replace />;
+  if (!isLoggedIn) return <Navigate to="/login" replace />;
+
+  if (allowedRole && role !== allowedRole) {
+    return role === "authority"
+      ? <Navigate to="/authority/dashboard" replace />
+      : <Navigate to="/dashboard" replace />;
   }
-  if (role !== allowedRole) {
-    if (role === 'citizen') return <Navigate to="/dashboard" replace />;
-    if (role === 'authority') return <Navigate to="/authority/dashboard" replace />;
-    return <Navigate to="/" replace />;
-  }
+
   return children;
 };
 
+/* ───────── App Controller ───────── */
+
 const AppController = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(() => localStorage.getItem("isLoggedIn") === "true");
-  const [role, setRole] = useState(() => localStorage.getItem("role") || null);
   const location = useLocation();
+  const isAuthorityRoute = location.pathname.startsWith("/authority");
+
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    localStorage.getItem("isLoggedIn") === "true"
+  );
+  const [role, setRole] = useState(
+    localStorage.getItem("role")
+  );
 
   useEffect(() => {
-    if (isLoggedIn) {
+    if (isLoggedIn && role) {
       localStorage.setItem("isLoggedIn", "true");
       localStorage.setItem("role", role);
     } else {
@@ -50,8 +65,6 @@ const AppController = () => {
       localStorage.removeItem("role");
     }
   }, [isLoggedIn, role]);
-
-  const isAuthorityPage = location.pathname.startsWith('/authority');
 
   const handleLogin = (userRole) => {
     setIsLoggedIn(true);
@@ -64,13 +77,20 @@ const AppController = () => {
   };
 
   return (
-    <div className="app-container">
-      {!isAuthorityPage && <Navbar isLoggedIn={isLoggedIn} onLogout={handleLogout} userRole={role} />}
+    <div className="min-h-screen flex flex-col">
 
-      <main className="main-content">
+      {!isAuthorityRoute && (
+        <Navbar
+          isLoggedIn={isLoggedIn}
+          userRole={role}
+          onLogout={handleLogout}
+        />
+      )}
+
+      <main className="flex-1">
         <Routes>
-          {/* --- PUBLIC ROUTES --- */}
-          {/* ✅ CORRECTED: The root path now correctly points to HomePage */}
+
+          {/* Public */}
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
           <Route path="/register" element={<RegisterPage onLogin={handleLogin} />} />
@@ -78,30 +98,44 @@ const AppController = () => {
           <Route path="/services" element={<ServicesPage />} />
           <Route path="/feedback" element={<FeedbackPage />} />
 
-          {/* --- CITIZEN PROTECTED ROUTES --- */}
+          {/* Citizen */}
           <Route
             path="/dashboard"
-            element={<ProtectedRoute isLoggedIn={isLoggedIn} role={role} allowedRole="citizen"><DashboardPage /></ProtectedRoute>}
-          />
-          <Route
-            path="/report-issue"
-            element={<ProtectedRoute isLoggedIn={isLoggedIn} role={role} allowedRole="citizen"><ReportIssuePage /></ProtectedRoute>}
-          />
-          <Route
-            path="/report-emergency"
-            element={<ProtectedRoute isLoggedIn={isLoggedIn} role={role} allowedRole="citizen"><EmergencyReportPage /></ProtectedRoute>}
+            element={
+              <ProtectedRoute isLoggedIn={isLoggedIn} role={role} allowedRole="citizen">
+                <DashboardPage />
+              </ProtectedRoute>
+            }
           />
 
-          {/* --- AUTHORITY PROTECTED ROUTES --- */}
-          <Route 
-            path="/authority" 
+          <Route
+            path="/report-issue"
+            element={
+              <ProtectedRoute isLoggedIn={isLoggedIn} role={role} allowedRole="citizen">
+                <ReportIssuePage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/report-emergency"
+            element={
+              <ProtectedRoute isLoggedIn={isLoggedIn} role={role} allowedRole="citizen">
+                <EmergencyReportPage />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Authority */}
+          <Route
+            path="/authority"
             element={
               <ProtectedRoute isLoggedIn={isLoggedIn} role={role} allowedRole="authority">
                 <AuthorityLayout onLogout={handleLogout} />
               </ProtectedRoute>
             }
           >
-            <Route index element={<Navigate to="dashboard" replace />} /> 
+            <Route index element={<Navigate to="dashboard" replace />} />
             <Route path="dashboard" element={<AuthorityDashboard />} />
             <Route path="issues" element={<AllIssuesPage />} />
           </Route>
@@ -110,17 +144,17 @@ const AppController = () => {
         </Routes>
       </main>
 
-      {!isAuthorityPage && <Footer />}
+      {!isAuthorityRoute && <Footer />}
     </div>
   );
 };
 
-function App() {
-  return (
-    <Router>
-      <AppController />
-    </Router>
-  );
-}
+/* ───────── Root ───────── */
+
+const App = () => (
+  <Router>
+    <AppController />
+  </Router>
+);
 
 export default App;

@@ -1,46 +1,83 @@
-import React from 'react';
+import React from "react";
+import { motion } from "framer-motion";
+import {
+  FiAlertCircle,
+  FiMap,
+  FiActivity,
+  FiClock,
+  FiUsers,
+  FiBarChart2
+} from "react-icons/fi";
 
-const ServicesPageStyles = () => (
-  <style>{`
-    .page-container { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
-    .page-header { text-align: center; margin-bottom: 3rem; }
-    .page-title { font-size: 2.8rem; color: #0d6efd; }
-    .page-subtitle { font-size: 1.2rem; color: #6c757d; max-width: 700px; margin: 0.5rem auto 0; }
-    .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
-    .service-card { background: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); padding: 2rem; text-align: center; transition: all 0.3s ease; }
-    .service-card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
-    .service-icon { font-size: 3rem; margin-bottom: 1rem; color: #0d6efd; }
-    .service-card h3 { font-size: 1.5rem; margin-bottom: 0.5rem; color: #212529; }
-    .service-card p { color: #6c757d; line-height: 1.6; }
-  `}</style>
-);
+const capabilities = [
+  {
+    title: "Structured Issue Intake",
+    desc: "Categorized reporting with location, severity, and department mapping.",
+    icon: <FiAlertCircle />
+  },
+  {
+    title: "Geographic Mapping",
+    desc: "Location-aware issue visualization across regions and wards.",
+    icon: <FiMap />
+  },
+  {
+    title: "Lifecycle Tracking",
+    desc: "Every issue follows a measurable resolution lifecycle.",
+    icon: <FiActivity />
+  },
+  {
+    title: "Time-Bound Resolution",
+    desc: "Defined SLAs and escalation mechanisms.",
+    icon: <FiClock />
+  },
+  {
+    title: "Citizen Communication",
+    desc: "Transparent updates and feedback loops.",
+    icon: <FiUsers />
+  },
+  {
+    title: "Governance Analytics",
+    desc: "Insights for planning, prioritization, and audits.",
+    icon: <FiBarChart2 />
+  }
+];
 
-const ServiceCard = ({ icon, title, description }) => (
-  <div className="service-card">
-    <div className="service-icon">{icon}</div>
-    <h3>{title}</h3>
-    <p>{description}</p>
-  </div>
-);
-
-const ServicesPage = () => {
+const CapabilitiesPage = () => {
   return (
-    <div className="page-container">
-      <ServicesPageStyles />
-      <div className="page-header">
-        <h1 className="page-title">Our Services</h1>
-        <p className="page-subtitle">We handle a wide range of non-emergency civic issues to improve our public infrastructure and environment.</p>
-      </div>
-      <div className="services-grid">
-        <ServiceCard icon="🛣️" title="Streets & Roads" description="Report potholes, damaged footpaths, faded road markings, and other street-related issues." />
-        <ServiceCard icon="🗑️" title="Garbage & Waste" description="Report overflowing bins, illegal dumping, or request waste collection services in your area." />
-        <ServiceCard icon="💡" title="Electricity" description="Report broken or malfunctioning streetlights, exposed wiring, and other public electrical hazards." />
-        <ServiceCard icon="💧" title="Sewage & Water" description="Report blocked drains, sewage leaks, or issues with public water supply and drainage." />
-        <ServiceCard icon="🌳" title="Forest & Parks" description="Report fallen trees, overgrown parks, or damage to public green spaces." />
-        <ServiceCard icon="🚨" title="Emergency Issues" description="A dedicated channel for high-priority disasters like floods, cyclones, and landslides." />
-      </div>
+    <div className="bg-neutral-50 text-neutral-900">
+
+      <section className="border-b border-neutral-200">
+        <div className="max-w-6xl mx-auto px-8 py-24">
+          <h1 className="text-4xl font-semibold">
+            Platform Capabilities
+          </h1>
+          <p className="mt-6 text-neutral-600 max-w-3xl">
+            CivicOS provides a comprehensive set of capabilities designed to
+            support modern, transparent, and accountable civic governance.
+          </p>
+        </div>
+      </section>
+
+      <section className="bg-white">
+        <div className="max-w-7xl mx-auto px-8 py-24 grid md:grid-cols-3 gap-8">
+          {capabilities.map((cap) => (
+            <motion.div
+              key={cap.title}
+              whileHover={{ y: -4 }}
+              className="border border-neutral-200 rounded-xl p-6"
+            >
+              <div className="text-teal-600 mb-4">{cap.icon}</div>
+              <h3 className="font-medium mb-2">{cap.title}</h3>
+              <p className="text-sm text-neutral-600">
+                {cap.desc}
+              </p>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
     </div>
   );
 };
 
-export default ServicesPage;
+export default CapabilitiesPage;

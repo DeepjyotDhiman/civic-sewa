@@ -1,45 +1,51 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { FaFacebookF, FaTwitter, FaInstagram, FaPhone, FaMapMarkerAlt, FaEnvelope } from 'react-icons/fa';
-import './Footer.css';
+import React from "react";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
-    <footer className="footer-container">
-      <div className="footer-content">
-        {/* About Column */}
-        <div className="footer-column">
-          <h3 className="footer-title">Civic Sewa</h3>
-          <p>A platform for the citizens of Gujarat to report, track, and resolve civic issues collaboratively.</p>
-          <div className="social-icons">
-            <a href="#" aria-label="Facebook"><FaFacebookF /></a>
-            <a href="#" aria-label="Twitter"><FaTwitter /></a>
-            <a href="#" aria-label="Instagram"><FaInstagram /></a>
-          </div>
+    <footer className="bg-neutral-950 text-neutral-400 mt-24">
+      <div className="max-w-7xl mx-auto px-8 py-16 grid gap-12 md:grid-cols-3">
+
+        {/* Platform */}
+        <div>
+          <h3 className="text-sm font-medium text-neutral-100 mb-4">
+            CivicOS Platform
+          </h3>
+          <p className="text-sm leading-relaxed">
+            CivicOS is a digital governance platform designed to coordinate
+            citizens and authorities through structured issue reporting,
+            transparent workflows, and data-driven public service delivery.
+          </p>
         </div>
 
-        {/* Contact Column */}
-        <div className="footer-column">
-          <h3 className="footer-title">Contact Us</h3>
-          <p><FaMapMarkerAlt /> Municipal Corporation Office, Ashram Road, Ahmedabad, Gujarat</p>
-          <p><FaPhone /> +91 79 1234 5678</p>
-          <p><FaEnvelope /> support@civicsewa.com</p>
-        </div>
-
-        {/* Quick Links Column */}
-        <div className="footer-column">
-          <h3 className="footer-title">Quick Links</h3>
-          <ul className="footer-links">
-            <li><Link to="/">Home</Link></li>
-            <li><Link to="/about">About</Link></li>
-            <li><Link to="/services">Services</Link></li>
-            <li><Link to="/feedback">Feedback</Link></li>
+        {/* Navigation */}
+        <div>
+          <h3 className="text-sm font-medium text-neutral-100 mb-4">
+            Platform
+          </h3>
+          <ul className="space-y-2 text-sm">
+            <li><Link to="/" className="hover:text-neutral-100">Home</Link></li>
+            <li><Link to="/about" className="hover:text-neutral-100">About</Link></li>
+            <li><Link to="/services" className="hover:text-neutral-100">Capabilities</Link></li>
+            <li><Link to="/login" className="hover:text-neutral-100">Login</Link></li>
           </ul>
+        </div>
+
+        {/* Governance */}
+        <div>
+          <h3 className="text-sm font-medium text-neutral-100 mb-4">
+            Governance & Trust
+          </h3>
+          <p className="text-sm leading-relaxed">
+            Built with transparency, accountability, and operational clarity
+            at its core. Designed to support modern civic governance and
+            public-sector workflows.
+          </p>
         </div>
       </div>
 
-      <div className="footer-bottom">
-        <p>&copy; {new Date().getFullYear()} Civic Sewa. All Rights Reserved.</p>
+      <div className="border-t border-neutral-800 py-6 text-center text-xs text-neutral-500">
+        © {new Date().getFullYear()} CivicOS · Public Digital Infrastructure
       </div>
     </footer>
   );

@@ -1,59 +1,165 @@
-import React, { useState, useEffect } from 'react';
-import { NavLink, Link } from 'react-router-dom'; // ✅ Use NavLink for active styles
-import { FiMenu, FiX } from 'react-icons/fi';
-import NotificationsBell from './NotificationsBell';
-import './Navbar.css';
+import React, { useState } from "react";
+import { NavLink, Link, useLocation } from "react-router-dom";
+import { FiMenu, FiX } from "react-icons/fi";
 
 const Navbar = ({ isLoggedIn, onLogout, userRole }) => {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
+  const [open, setOpen] = useState(false);
+  const location = useLocation();
 
-  // ✅ Effect to handle navbar shadow on scroll
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 10);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  const isAuthority = location.pathname.startsWith("/authority");
 
-  const closeMenu = () => setMenuOpen(false);
+  const linkBase =
+    "px-3 py-2 text-sm rounded-md transition-colors duration-200";
+
+  const linkClass = ({ isActive }) =>
+    `${linkBase} ${
+      isActive
+        ? "text-teal-600"
+        : "text-neutral-600 hover:text-neutral-900"
+    }`;
 
   return (
-    <header className={`navbar-header ${scrolled ? 'scrolled' : ''}`}>
-      <nav className="navbar-container">
-        <Link to="/" className="navbar-brand" onClick={closeMenu}>
-          civic<span>sewa</span>
+    <header
+      className={`sticky top-0 z-50 border-b ${
+        isAuthority
+          ? "bg-neutral-950 border-neutral-800 text-neutral-100"
+          : "bg-white/90 backdrop-blur border-neutral-200 text-neutral-900"
+      }`}
+    >
+      <nav className="max-w-7xl mx-auto px-8 py-4 flex items-center justify-between">
+
+        {/* Brand */}
+        <Link
+          to="/"
+          className={`text-lg font-medium tracking-tight ${
+            isAuthority ? "text-neutral-100" : "text-neutral-900"
+          }`}
+        >
+          Civic<span className="text-teal-500">OS</span>
         </Link>
 
-        <button className="hamburger" onClick={() => setMenuOpen(!menuOpen)}>
-          {menuOpen ? <FiX /> : <FiMenu />}
+        {/* Desktop Nav */}
+        <div className="hidden md:flex items-center gap-1">
+          <NavLink to="/" className={linkClass}>Home</NavLink>
+          <NavLink to="/about" className={linkClass}>About</NavLink>
+          <NavLink to="/services" className={linkClass}>Capabilities</NavLink>
+          <NavLink to="/feedback" className={linkClass}>Feedback</NavLink>
+          {isLoggedIn && userRole === "citizen" && (
+            <NavLink to="/dashboard" className={linkClass}>
+              Dashboard
+            </NavLink>
+          )}
+
+          {isLoggedIn && userRole === "authority" && (
+            <NavLink to="/authority/dashboard" className={linkClass}>
+              Authority Console
+            </NavLink>
+          )}
+        </div>
+
+        {/* Actions */}
+        <div className="hidden md:flex items-center gap-3">
+          {isLoggedIn ? (
+            <button
+              onClick={onLogout}
+              className={`text-sm ${
+                isAuthority
+                  ? "text-neutral-400 hover:text-neutral-100"
+                  : "text-neutral-600 hover:text-neutral-900"
+              }`}
+            >
+              Logout
+            </button>
+          ) : (
+            <>
+              <Link
+                to="/login"
+                className={`text-sm ${
+                  isAuthority
+                    ? "text-neutral-300"
+                    : "text-neutral-600 hover:text-neutral-900"
+                }`}
+              >
+                Login
+              </Link>
+              <Link
+                to="/register"
+                className="px-4 py-1.5 text-sm rounded-md
+                           bg-neutral-900 text-white
+                           hover:bg-neutral-800"
+              >
+                Get Started
+              </Link>
+            </>
+          )}
+        </div>
+
+        {/* Mobile Toggle */}
+        <button
+          className="md:hidden text-xl"
+          onClick={() => setOpen(!open)}
+        >
+          {open ? <FiX /> : <FiMenu />}
         </button>
+      </nav>
 
-        <div className={`navbar-links ${menuOpen ? 'active' : ''}`}>
-          <NavLink to="/" className="nav-link" onClick={closeMenu}>Home</NavLink>
-          <NavLink to="/about" className="nav-link" onClick={closeMenu}>About</NavLink>
-          <NavLink to="/services" className="nav-link" onClick={closeMenu}>Services</NavLink>
+      {/* Mobile Menu */}
+      {open && (
+        <div
+          className={`md:hidden border-t ${
+            isAuthority
+              ? "bg-neutral-950 border-neutral-800"
+              : "bg-white border-neutral-200"
+          }`}
+        >
+          <div className="px-6 py-4 space-y-2">
+            <NavLink to="/" className={linkClass} onClick={() => setOpen(false)}>
+              Home
+            </NavLink>
+            <NavLink to="/about" className={linkClass} onClick={() => setOpen(false)}>
+              About
+            </NavLink>
+            <NavLink to="/services" className={linkClass} onClick={() => setOpen(false)}>
+              Capabilities
+            </NavLink>
+            <NavLink to="/feedback" className={linkClass} onClick={() => setOpen(false)}>
+  Feedback
+</NavLink>
 
-          <div className="navbar-actions">
-            {isLoggedIn ? (
-              <>
-                <NavLink to="/dashboard" className="nav-link" onClick={closeMenu}>Dashboard</NavLink>
-                {/* ✅ Notification Bell integrated here */}
-                <NotificationsBell userRole={userRole} />
-                <button onClick={() => { onLogout(); closeMenu(); }} className="nav-button logout">
+            {isLoggedIn && userRole === "citizen" && (
+              <NavLink to="/dashboard" className={linkClass} onClick={() => setOpen(false)}>
+                Dashboard
+              </NavLink>
+            )}
+
+            {isLoggedIn && userRole === "authority" && (
+              <NavLink to="/authority/dashboard" className={linkClass} onClick={() => setOpen(false)}>
+                Authority Console
+              </NavLink>
+            )}
+
+            <div className="pt-3 border-t border-neutral-200">
+              {isLoggedIn ? (
+                <button
+                  onClick={onLogout}
+                  className="text-sm text-neutral-600"
+                >
                   Logout
                 </button>
-              </>
-            ) : (
-              <>
-                <Link to="/auth" className="nav-button outline" onClick={closeMenu}>Login</Link>
-                <Link to="/auth" className="nav-button primary" onClick={closeMenu}>Register</Link>
-              </>
-            )}
+              ) : (
+                <>
+                  <Link to="/login" className="block text-sm text-neutral-600">
+                    Login
+                  </Link>
+                  <Link to="/register" className="block text-sm text-neutral-600">
+                    Register
+                  </Link>
+                </>
+              )}
+            </div>
           </div>
         </div>
-      </nav>
+      )}
     </header>
   );
 };

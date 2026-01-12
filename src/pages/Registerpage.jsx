@@ -1,133 +1,131 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore"; // ✅ Use setDoc to specify user ID
-import { auth, db } from "../firebase";
-import "./Registerpage.css"; // We'll create this CSS file
 
 const RegisterPage = ({ onLogin }) => {
-    const [fullName, setFullName] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [role, setRole] = useState("citizen"); // ✅ State to manage selected role
-    const [error, setError] = useState("");
-    const [isLoading, setIsLoading] = useState(false);
-    const navigate = useNavigate();
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [role, setRole] = useState("citizen");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        if (password.length < 6) {
-            setError("Password must be at least 6 characters long.");
-            return;
-        }
-        setIsLoading(true);
-        setError("");
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setError("");
 
-        try {
-            // Step 1: Create user in Firebase Authentication
-            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-            const user = userCredential.user;
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters.");
+      return;
+    }
 
-            // Step 2: Create a user document in Firestore with the user's UID as the document ID
-            await setDoc(doc(db, "users", user.uid), {
-                uid: user.uid,
-                fullName: fullName,
-                email: email,
-                role: role, // ✅ Save the selected role
-            });
+    setLoading(true);
 
-            // Step 3: Log the user into the app state
-            onLogin(role);
+    setTimeout(() => {
+      onLogin(role);
 
-            // Step 4: Redirect to the correct dashboard
-            if (role === 'authority') {
-                navigate("/authority/dashboard");
-            } else {
-                navigate("/dashboard");
-            }
+      if (role === "authority") {
+        navigate("/authority/dashboard");
+      } else {
+        navigate("/dashboard");
+      }
 
-        } catch (err) {
-            if (err.code === 'auth/email-already-in-use') {
-                setError("This email address is already in use.");
-            } else {
-                setError("Failed to create an account. Please try again.");
-            }
-            console.error(err);
-        } finally {
-            setIsLoading(false);
-        }
-    };
+      setLoading(false);
+    }, 1000);
+  };
 
-    return (
-        <div className="auth-page">
-            <div className="auth-container">
-                <h1 className="auth-title">Create an Account</h1>
-                {error && <p className="error-text">{error}</p>}
-                <form className="auth-form" onSubmit={handleSubmit}>
-                    <div className="form-group">
-                        <label>Full Name</label>
-                        <input
-                            type="text"
-                            className="form-input"
-                            value={fullName}
-                            onChange={(e) => setFullName(e.target.value)}
-                            required
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label>Email Address</label>
-                        <input
-                            type="email"
-                            className="form-input"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label>Password</label>
-                        <input
-                            type="password"
-                            className="form-input"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                        />
-                    </div>
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+      <div className="w-full max-w-md bg-white border rounded-lg shadow-sm p-8">
+        <h1 className="text-2xl font-bold text-blue-700 mb-6">
+          Create Account
+        </h1>
 
-                    {/* ✅ Role Selector UI */}
-                    <div className="form-group">
-                        <label>Register as</label>
-                        <div className="role-selector">
-                            <button
-                                type="button"
-                                className={`role-btn ${role === 'citizen' ? 'active' : ''}`}
-                                onClick={() => setRole('citizen')}
-                            >
-                                Citizen
-                            </button>
-                            <button
-                                type="button"
-                                className={`role-btn ${role === 'authority' ? 'active' : ''}`}
-                                onClick={() => setRole('authority')}
-                            >
-                                Authority
-                            </button>
-                        </div>
-                    </div>
+        {error && (
+          <p className="mb-4 text-sm text-red-600 font-medium">{error}</p>
+        )}
 
-                    <button type="submit" className="auth-submit-btn" disabled={isLoading}>
-                        {isLoading ? "Creating Account..." : "Register"}
-                    </button>
-                </form>
-                <p className="auth-toggle-text">
-                    Already have an account? <Link to="/login" className="toggle-link">Login</Link>
-                </p>
-                 {/* ✅ Added styles for error text */}
-                <style>{`.error-text { color: #dc3545; font-weight: 500; margin-bottom: 15px; }`}</style>
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
+            <label className="block text-sm font-medium mb-1">
+              Full Name
+            </label>
+            <input
+              type="text"
+              className="w-full border rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-600"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1">
+              Email Address
+            </label>
+            <input
+              type="email"
+              className="w-full border rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-600"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1">
+              Password
+            </label>
+            <input
+              type="password"
+              className="w-full border rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-600"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+
+          {/* Role Selector */}
+          <div>
+            <label className="block text-sm font-medium mb-2">
+              Register As
+            </label>
+            <div className="flex gap-3">
+              {["citizen", "authority"].map((r) => (
+                <button
+                  type="button"
+                  key={r}
+                  onClick={() => setRole(r)}
+                  className={`px-4 py-2 rounded-md border transition
+                    ${role === r
+                      ? "bg-blue-600 text-white border-blue-600"
+                      : "border-gray-300 hover:bg-gray-100"}`}
+                >
+                  {r.charAt(0).toUpperCase() + r.slice(1)}
+                </button>
+              ))}
             </div>
-        </div>
-    );
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-blue-600 text-white py-2 rounded-md
+                       hover:bg-blue-700 transition disabled:opacity-60"
+          >
+            {loading ? "Creating Account..." : "Register"}
+          </button>
+        </form>
+
+        <p className="mt-6 text-sm text-gray-600">
+          Already have an account?{" "}
+          <Link to="/login" className="text-blue-600 font-medium">
+            Login
+          </Link>
+        </p>
+      </div>
+    </div>
+  );
 };
 
 export default RegisterPage;
