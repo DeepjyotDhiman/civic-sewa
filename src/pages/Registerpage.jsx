@@ -2,29 +2,37 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 
 const RegisterPage = ({ onLogin }) => {
-  const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [role, setRole] = useState("citizen");
+  const navigate = useNavigate();
+
+  const [form, setForm] = useState({
+    fullName: "",
+    email: "",
+    password: "",
+    role: "citizen",
+  });
+
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
+
+  const handleChange = (e) =>
+    setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSubmit = (e) => {
     e.preventDefault();
     setError("");
 
-    if (password.length < 6) {
+    if (form.password.length < 6) {
       setError("Password must be at least 6 characters.");
       return;
     }
 
     setLoading(true);
 
+    // 🔹 Mock registration
     setTimeout(() => {
-      onLogin(role);
+      onLogin(form.role);
 
-      if (role === "authority") {
+      if (form.role === "authority") {
         navigate("/authority/dashboard");
       } else {
         navigate("/dashboard");
@@ -35,27 +43,30 @@ const RegisterPage = ({ onLogin }) => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <div className="w-full max-w-md bg-white border rounded-lg shadow-sm p-8">
-        <h1 className="text-2xl font-bold text-blue-700 mb-6">
+    <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4">
+      <div className="w-full max-w-md bg-white border border-slate-200 rounded-lg p-8">
+
+        <h1 className="text-2xl font-semibold text-slate-900 mb-6">
           Create Account
         </h1>
 
         {error && (
-          <p className="mb-4 text-sm text-red-600 font-medium">{error}</p>
+          <p className="mb-4 text-sm text-red-600">{error}</p>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-5">
+
           <div>
             <label className="block text-sm font-medium mb-1">
               Full Name
             </label>
             <input
-              type="text"
-              className="w-full border rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-600"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
+              name="fullName"
               required
+              value={form.fullName}
+              onChange={handleChange}
+              className="w-full border border-slate-300 rounded-md px-3 py-2
+                         focus:outline-none focus:ring-2 focus:ring-slate-900"
             />
           </div>
 
@@ -64,11 +75,13 @@ const RegisterPage = ({ onLogin }) => {
               Email Address
             </label>
             <input
+              name="email"
               type="email"
-              className="w-full border rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-600"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
               required
+              value={form.email}
+              onChange={handleChange}
+              className="w-full border border-slate-300 rounded-md px-3 py-2
+                         focus:outline-none focus:ring-2 focus:ring-slate-900"
             />
           </div>
 
@@ -77,29 +90,33 @@ const RegisterPage = ({ onLogin }) => {
               Password
             </label>
             <input
+              name="password"
               type="password"
-              className="w-full border rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-600"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
               required
+              value={form.password}
+              onChange={handleChange}
+              className="w-full border border-slate-300 rounded-md px-3 py-2
+                         focus:outline-none focus:ring-2 focus:ring-slate-900"
             />
           </div>
 
           {/* Role Selector */}
           <div>
-            <label className="block text-sm font-medium mb-2">
+            <label className="block text-sm font-medium text-slate-700 mb-2">
               Register As
             </label>
-            <div className="flex gap-3">
+            <div className="flex gap-2">
               {["citizen", "authority"].map((r) => (
                 <button
-                  type="button"
                   key={r}
-                  onClick={() => setRole(r)}
-                  className={`px-4 py-2 rounded-md border transition
-                    ${role === r
-                      ? "bg-blue-600 text-white border-blue-600"
-                      : "border-gray-300 hover:bg-gray-100"}`}
+                  type="button"
+                  onClick={() => setForm({ ...form, role: r })}
+                  className={`flex-1 px-4 py-2 rounded-md border text-sm transition
+                    ${
+                      form.role === r
+                        ? "bg-slate-900 text-white border-slate-900"
+                        : "border-slate-300 text-slate-700 hover:bg-slate-100"
+                    }`}
                 >
                   {r.charAt(0).toUpperCase() + r.slice(1)}
                 </button>
@@ -110,16 +127,18 @@ const RegisterPage = ({ onLogin }) => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 text-white py-2 rounded-md
-                       hover:bg-blue-700 transition disabled:opacity-60"
+            className="w-full py-2 rounded-md bg-slate-900 text-white
+                       hover:bg-slate-800 transition disabled:opacity-60"
           >
-            {loading ? "Creating Account..." : "Register"}
+            {loading
+              ? "Creating Account..."
+              : `Register as ${form.role === "authority" ? "Authority" : "Citizen"}`}
           </button>
         </form>
 
-        <p className="mt-6 text-sm text-gray-600">
+        <p className="mt-6 text-sm text-slate-600">
           Already have an account?{" "}
-          <Link to="/login" className="text-blue-600 font-medium">
+          <Link to="/login" className="text-slate-900 font-medium">
             Login
           </Link>
         </p>
