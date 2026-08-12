@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { FiUser, FiShield, FiLock, FiMail, FiArrowRight, FiCheckCircle } from "react-icons/fi";
 
 const LoginPage = ({ onLogin }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("citizen"); // ✅ key change
+  const [role, setRole] = useState("citizen");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -15,108 +17,145 @@ const LoginPage = ({ onLogin }) => {
     setError("");
 
     if (!email || !password) {
-      setError("Please enter email and password.");
+      setError("Please fill in both email and password.");
       return;
     }
 
     setLoading(true);
 
-    // 🔹 Simulated auth (replace with backend later)
     setTimeout(() => {
       onLogin(role);
-
       if (role === "authority") {
         navigate("/authority/dashboard");
       } else {
         navigate("/dashboard");
       }
-
       setLoading(false);
-    }, 800);
+    }, 600);
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4">
-      <div className="w-full max-w-md bg-white border border-slate-200 rounded-lg p-8">
+    <div className="min-h-[85vh] flex items-center justify-center bg-slate-950 px-4 py-12 relative overflow-hidden">
+      {/* Background Lights */}
+      <div className="absolute top-1/4 left-1/3 w-80 h-80 bg-teal-500/10 blur-[140px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-1/4 right-1/3 w-80 h-80 bg-cyan-500/10 blur-[140px] rounded-full pointer-events-none" />
 
-        <h1 className="text-2xl font-semibold text-slate-900 mb-6">
-          Portal Login
-        </h1>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="w-full max-w-md relative z-10"
+      >
+        <div className="glass-card rounded-2xl p-8 border border-slate-800 shadow-2xl space-y-6">
+          {/* Header */}
+          <div className="text-center space-y-2">
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-gradient-to-tr from-teal-500 to-emerald-400 text-slate-950 font-bold text-xl shadow-glow-teal mb-1">
+              C
+            </div>
+            <h1 className="text-2xl font-bold font-heading text-white">Welcome Back</h1>
+            <p className="text-xs text-slate-400">Sign in to access your CivicOS portal</p>
+          </div>
 
-        {error && (
-          <p className="mb-4 text-sm text-red-600">{error}</p>
-        )}
+          {error && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs font-medium"
+            >
+              {error}
+            </motion.div>
+          )}
 
-        {/* Role Selector */}
-        <div className="mb-6">
-          <label className="block text-sm font-medium text-slate-700 mb-2">
-            Login As
-          </label>
-          <div className="flex gap-2">
-            {["citizen", "authority"].map((r) => (
+          {/* Role Segment Switcher */}
+          <div className="space-y-1.5">
+            <label className="label">Portal Role</label>
+            <div className="grid grid-cols-2 gap-2 p-1.5 bg-slate-900/90 border border-slate-800 rounded-xl">
               <button
-                key={r}
                 type="button"
-                onClick={() => setRole(r)}
-                className={`flex-1 px-4 py-2 rounded-md border text-sm transition
-                  ${role === r
-                    ? "bg-slate-900 text-white border-slate-900"
-                    : "border-slate-300 text-slate-700 hover:bg-slate-100"}`}
+                onClick={() => setRole("citizen")}
+                className={`py-2 px-3 rounded-lg text-xs font-semibold flex items-center justify-center gap-2 transition-all ${
+                  role === "citizen"
+                    ? "bg-gradient-to-r from-teal-500 to-emerald-500 text-slate-950 shadow-glow-teal"
+                    : "text-slate-400 hover:text-white hover:bg-slate-800/60"
+                }`}
               >
-                {r.charAt(0).toUpperCase() + r.slice(1)}
+                <FiUser /> Citizen Portal
               </button>
-            ))}
+              <button
+                type="button"
+                onClick={() => setRole("authority")}
+                className={`py-2 px-3 rounded-lg text-xs font-semibold flex items-center justify-center gap-2 transition-all ${
+                  role === "authority"
+                    ? "bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 shadow-sm"
+                    : "text-slate-400 hover:text-white hover:bg-slate-800/60"
+                }`}
+              >
+                <FiShield /> Authority
+              </button>
+            </div>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="label">Email Address</label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                  <FiMail />
+                </div>
+                <input
+                  type="email"
+                  className="input pl-10"
+                  placeholder="name@city.gov or citizen@mail.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="label">Password</label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                  <FiLock />
+                </div>
+                <input
+                  type="password"
+                  className="input pl-10"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-3 rounded-xl bg-gradient-to-r from-teal-500 via-emerald-400 to-teal-400 text-slate-950 font-bold text-sm shadow-glow-teal hover:shadow-glow-emerald transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50"
+            >
+              {loading ? (
+                <span>Authenticating...</span>
+              ) : (
+                <>
+                  <span>Sign In as {role === "authority" ? "Authority Console" : "Citizen Portal"}</span>
+                  <FiArrowRight />
+                </>
+              )}
+            </button>
+          </form>
+
+          <div className="pt-4 border-t border-slate-800 text-center">
+            <p className="text-xs text-slate-400">
+              Don’t have an account yet?{" "}
+              <Link to="/register" className="text-teal-400 font-semibold hover:underline">
+                Create Account
+              </Link>
+            </p>
           </div>
         </div>
-
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div>
-            <label className="block text-sm font-medium mb-1">
-              Email Address
-            </label>
-            <input
-              type="email"
-              className="w-full border border-slate-300 rounded-md px-3 py-2
-                         focus:outline-none focus:ring-2 focus:ring-slate-900"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium mb-1">
-              Password
-            </label>
-            <input
-              type="password"
-              className="w-full border border-slate-300 rounded-md px-3 py-2
-                         focus:outline-none focus:ring-2 focus:ring-slate-900"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-2 rounded-md bg-slate-900 text-white
-                       hover:bg-slate-800 transition disabled:opacity-60"
-          >
-            {loading
-              ? "Signing In..."
-              : `Login as ${role === "authority" ? "Authority" : "Citizen"}`}
-          </button>
-        </form>
-
-        <p className="mt-6 text-sm text-slate-600">
-          Don’t have an account?{" "}
-          <Link to="/register" className="text-slate-900 font-medium">
-            Register
-          </Link>
-        </p>
-      </div>
+      </motion.div>
     </div>
   );
 };

@@ -4,89 +4,95 @@ import {
   FiLayers,
   FiUsers,
   FiShield,
-  FiTrendingUp
+  FiTrendingUp,
+  FiCheckCircle,
+  FiGlobe
 } from "react-icons/fi";
 
 const AboutPage = () => {
   return (
-    <div className="bg-neutral-50 text-neutral-900">
+    <div className="min-h-screen bg-slate-950 text-slate-100 overflow-hidden">
+      {/* Hero Header */}
+      <section className="relative py-24 border-b border-slate-800/80">
+        <div className="absolute top-10 left-1/3 w-96 h-96 bg-teal-500/10 blur-[140px] rounded-full pointer-events-none" />
 
-      {/* Context */}
-      <section className="border-b border-neutral-200">
-        <div className="max-w-6xl mx-auto px-8 py-24">
+        <div className="max-w-6xl mx-auto px-6 space-y-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-teal-500/10 border border-teal-500/20 text-xs font-semibold text-teal-400"
+          >
+            <FiGlobe /> Transforming Civic Digital Infrastructure
+          </motion.div>
+
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-4xl font-semibold"
+            transition={{ delay: 0.1 }}
+            className="text-4xl sm:text-5xl font-extrabold tracking-tight font-heading text-white"
           >
-            About CivicOS
+            About <span className="gradient-text">CivicOS</span>
           </motion.h1>
 
-          <p className="mt-6 text-lg text-neutral-600 max-w-3xl leading-relaxed">
-            CivicOS is a civic coordination platform designed to replace
-            fragmented complaint systems with a unified, transparent, and
-            accountable public service workflow.
-          </p>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="text-slate-400 text-base sm:text-lg max-w-3xl leading-relaxed"
+          >
+            CivicOS is a next-generation civic engagement platform engineered to unify fragmented public complaint channels into an auditable, real-time dispatch ecosystem for modern municipal governance.
+          </motion.p>
         </div>
       </section>
 
-      {/* Vision */}
-      <section className="bg-white">
-        <div className="max-w-7xl mx-auto px-8 py-24 grid md:grid-cols-2 gap-16">
-
-          <div>
-            <h2 className="text-2xl font-medium mb-4 flex gap-3 items-center">
-              <FiLayers /> Platform Vision
-            </h2>
-            <p className="text-neutral-600 leading-relaxed">
-              CivicOS treats civic issues as operational data — not isolated
-              complaints. Each issue flows through a measurable lifecycle:
-              intake, assignment, resolution, and closure.
+      {/* Vision & Impact */}
+      <section className="py-20 max-w-7xl mx-auto px-6">
+        <div className="grid md:grid-cols-2 gap-8">
+          <div className="glass-card rounded-2xl p-8 border border-slate-800 space-y-4">
+            <div className="w-12 h-12 rounded-xl bg-teal-500/10 border border-teal-500/20 text-teal-400 flex items-center justify-center text-xl">
+              <FiLayers />
+            </div>
+            <h2 className="text-2xl font-bold font-heading text-white">Operational Telemetry Data</h2>
+            <p className="text-sm text-slate-400 leading-relaxed">
+              CivicOS treats civic issues as structured operational telemetry data rather than isolated user complaints. Each incident transitions through verifiable lifecycle stages: Intake, Department Routing, Field Work, and Photographic Proof Closure.
             </p>
           </div>
 
-          <div>
-            <h2 className="text-2xl font-medium mb-4 flex gap-3 items-center">
-              <FiTrendingUp /> Governance Impact
-            </h2>
-            <p className="text-neutral-600 leading-relaxed">
-              By introducing transparency and accountability at every stage,
-              CivicOS improves trust, reduces delays, and enables data-driven
-              governance decisions.
+          <div className="glass-card rounded-2xl p-8 border border-slate-800 space-y-4">
+            <div className="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 flex items-center justify-center text-xl">
+              <FiTrendingUp />
+            </div>
+            <h2 className="text-2xl font-bold font-heading text-white">Governance & Accountability</h2>
+            <p className="text-sm text-slate-400 leading-relaxed">
+              By introducing transparent SLAs, automated department dispatch, and live status dashboards, CivicOS rebuilds citizen trust, eliminates bureaucracy delays, and supplies city planners with actionable metrics.
             </p>
           </div>
-
         </div>
       </section>
 
       {/* Principles */}
-      <section className="bg-neutral-50">
-        <div className="max-w-7xl mx-auto px-8 py-24">
-          <h2 className="text-2xl font-medium mb-12">
-            Design Principles
-          </h2>
+      <section className="py-20 border-t border-slate-800/80 bg-slate-900/40">
+        <div className="max-w-7xl mx-auto px-6 space-y-12">
+          <div className="text-center max-w-xl mx-auto">
+            <h2 className="text-3xl font-bold font-heading text-white">Core Architectural Principles</h2>
+            <p className="text-sm text-slate-400 mt-2">Built around accountability, operational clarity, and speed.</p>
+          </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-3 gap-6">
             {[
-              ["Citizen-Centric", "Clarity, visibility, and trust for every citizen.", <FiUsers />],
-              ["Authority-Ready", "Operational tools designed for real workflows.", <FiShield />],
-              ["Data-Driven", "Insights that improve planning and accountability.", <FiTrendingUp />],
+              ["Citizen First", "Effortless report filing, direct progress tracking, and instant notifications.", <FiUsers />],
+              ["Authority Telemetry", "Command consoles designed for municipal department leads and rapid dispatchers.", <FiShield />],
+              ["Auditability", "Transparent resolution trails preventing dropped complaints and unaccountable delays.", <FiCheckCircle />],
             ].map(([title, desc, icon]) => (
-              <div
-                key={title}
-                className="bg-white border border-neutral-200 rounded-xl p-6"
-              >
-                <div className="text-teal-600 mb-4">{icon}</div>
-                <h3 className="font-medium mb-2">{title}</h3>
-                <p className="text-sm text-neutral-600">
-                  {desc}
-                </p>
+              <div key={title} className="glass-card rounded-2xl p-6 border border-slate-800 space-y-3">
+                <div className="text-teal-400 text-xl">{icon}</div>
+                <h3 className="text-lg font-bold font-heading text-white">{title}</h3>
+                <p className="text-xs text-slate-400 leading-relaxed">{desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
-
     </div>
   );
 };

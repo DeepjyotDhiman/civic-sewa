@@ -6,6 +6,7 @@ import {
   Navigate,
   useLocation,
 } from "react-router-dom";
+import { ReportsProvider } from "./context/ReportsContext";
 
 /* Layout */
 import Navbar from "./components/Navbar";
@@ -77,7 +78,7 @@ const AppController = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-slate-950 text-slate-100 font-sans">
 
       {!isAuthorityRoute && (
         <Navbar
@@ -152,9 +153,11 @@ const AppController = () => {
 /* ───────── Root ───────── */
 
 const App = () => (
-  <Router>
-    <AppController />
-  </Router>
+  <ReportsProvider>
+    <Router>
+      <AppController />
+    </Router>
+  </ReportsProvider>
 );
 
 export default App;
